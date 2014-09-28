@@ -36,3 +36,29 @@ Create a file named salad.yml and add it to Vagrant:
 ```
 vagrant up
 ```
+
+## Install nginx
+
+Use apt to install nginx at a specific version
+```
+    - name: install packages
+      apt: pkg={{ item }} state=latest
+      sudo: yes
+      with_items:
+        - nginx=1.6.0
+```
+
+To provision our Vagrant machine (in this case install nginx in its default state) just type:
+```
+vagrant provision
+```
+
+To access the now running nginx on http://localhost:8080 we need to forward the clients port 80 to the hosts port 8080 in our Vagrantfile.
+```
+config.vm.network "forwarded_port", guest: 80, host: 8080
+
+```
+To reload the Vagrantfile type:
+```
+vagrant reload
+```
