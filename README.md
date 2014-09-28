@@ -117,3 +117,27 @@ To run your playbook on this group, just specify the hosts file with the -i argu
 ```
 ansible-playbook -i hosts salad.yml
 ```
+
+## Different configuration for development and production
+
+Say we want to enable a more verbose debug log on the development machine.
+We need to supply default value in our playbook - salad.yml
+```
+  vars:
+    web_server:
+      log_flags: ''
+```
+
+In our Vagrantfile add the log_flags to the Ansible config:
+```
+web_server: {
+  log_flags: 'debug'
+}
+```
+
+And alter our nginx-site to use the advanced log:
+```
+error_log /var/log/nginx/error.log {{ web_server.log_flags }};
+```
+
+We can now provision our vagrant machine and our host with these changes.
