@@ -103,3 +103,17 @@ After provisioning we can visit our new nginx site on localhost:8080
 ```
 vagrant provision
 ```
+
+## Upload to production server
+
+You need a running VPS at the provider of your choice. I prepared a server under salad.entwicklerbier.org.
+Create a hosts file containing:
+```
+[salad]
+salad.entwicklerbier.org
+```
+
+To run your playbook on this group, just specify the hosts file with the -i argument:
+```
+ansible-playbook -i hosts salad.yml
+```

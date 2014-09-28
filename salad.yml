@@ -9,7 +9,7 @@
       apt: pkg={{ item }} state=present
       sudo: yes
       with_items:
-        - nginx=1.4.6-1ubuntu3
+        - nginx
 
     - name: disable nginx default site
       file: path=/etc/nginx/sites-available/default state=absent
