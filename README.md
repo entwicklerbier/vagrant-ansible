@@ -13,3 +13,10 @@ brew install ansible
 
 ### Vagrant
 https://docs.vagrantup.com/v2/installation/
+
+## Vagrant
+
+Init a new Vagrant machine with Ubuntu 14.04 64bit:
+```
+vagrant init ubuntu/trusty64
+```
