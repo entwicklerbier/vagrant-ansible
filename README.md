@@ -62,3 +62,44 @@ To reload the Vagrantfile type:
 ```
 vagrant reload
 ```
+
+## Create our own nginx site
+
+Disable default nginx site in salad.yml:
+```
+    - name: disable nginx default site
+      file: path=/etc/nginx/sites-available/default state=absent
+      sudo: yes
+      notify: restart nginx
+
+```
+
+Create index.html and nginx_site in templates
+
+Add lines to salad.yml:
+```
+
+    - name: enable nginx salad site
+      file: src=/etc/nginx/sites-available/salad dest=/etc/nginx/sites-enabled/salad owner={{ whoami.stdout }} group=www-data state=link
+      sudo: yes
+      notify: restart nginx
+
+    - name: ensure /var/www/salad/ exists
+      file: path=/var/www/salad state=directory recurse=yes owner={{ whoami.stdout }} group=www-data
+      sudo: yes
+
+    - name: add default index.html
+      template: src=templates/index.html dest=/var/www/salad/index.html
+
+  handlers:
+
+    - name: restart nginx
+      sudo: yes
+      action: service name=nginx state=restarted enabled=yes
+
+```
+
+After provisioning we can visit our new nginx site on localhost:8080
+```
+vagrant provision
+```
