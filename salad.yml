@@ -16,7 +16,7 @@
         - nginx
 
     - name: disable nginx default site
-      file: path=/etc/nginx/sites-available/default state=absent
+      file: path=/etc/nginx/sites-enabled/default state=absent
       sudo: yes
       notify: restart nginx
 
