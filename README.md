@@ -141,3 +141,32 @@ error_log /var/log/nginx/error.log {{ web_server.log_flags }};
 ```
 
 We can now provision our vagrant machine and our host with these changes.
+
+## Deploying SSL-Certificates
+
+Adapt your nginx-config to load the ssl certs.
+
+You should really not put your unencrypted key files in a public repo. So let's encrypt it:
+```
+openssl rsa -des -in salad.entwicklerbier.org.key -out salad.entwicklerbier.org.key
+```
+
+Add a vars_prompt to salad.yml which lets you query the passphrase from the previous step from the user:
+```
+vars_prompt:
+  - name: ssl_passphrase
+    prompt: "Enter SSL Certificate Passphrase"
+    private: true
+```
+
+There are a couple of new tasks to copy the certificate chain/key in position.
+To let the vars_prompt value decrypt your keyfile you need the {{ssl_passphrase}} variable
+```
+- name: strip ssl keys
+  command: openssl rsa -in /etc/ssl/private/salad.entwicklerbier.secured.org.key -out /etc/ssl/private/salad.entwicklerbier.org.key -passin pass:{{ssl_passphrase}} creates=/etc/ssl/private/salad.entwicklerbier.org.key
+  sudo: yes
+  notify: restart nginx
+
+```
+
+Provision and ssl :)

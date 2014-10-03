@@ -3,6 +3,10 @@
   vars:
     web_server:
       log_flags: ''
+  vars_prompt:
+    - name: ssl_passphrase
+      prompt: "Enter SSL Certificate Passphrase"
+      private: true
 
   tasks:
 
@@ -35,6 +39,26 @@
 
     - name: add default index.html
       template: src=templates/index.html dest=/var/www/salad/index.html
+
+    - name: ssl certs dir
+      file: path=/etc/ssl/certs mode=755 state=directory owner=root
+      sudo: yes
+      tags: ssl
+
+    - name: copy the certificate
+      copy: src=certs/salad.entwicklerbier.org.crt dest=/etc/ssl/certs/salad.entwicklerbier.org.crt
+      sudo: yes
+      notify: restart nginx
+
+    - name: copy the key
+      copy: src=certs/salad.entwicklerbier.org.key dest=/etc/ssl/private/salad.entwicklerbier.secured.org.key
+      sudo: yes
+      notify: restart nginx
+
+    - name: strip ssl keys
+      command: openssl rsa -in /etc/ssl/private/salad.entwicklerbier.secured.org.key -out /etc/ssl/private/salad.entwicklerbier.org.key -passin pass:{{ssl_passphrase}} creates=/etc/ssl/private/salad.entwicklerbier.org.key
+      sudo: yes
+      notify: restart nginx
 
   handlers:
 
